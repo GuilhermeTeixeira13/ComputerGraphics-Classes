@@ -1,6 +1,8 @@
 
 #include <iostream>
 
+/*
+
 // GLEW
 //#define GLEW_STATIC
 #include <GL/glew.h>
@@ -172,3 +174,4 @@ int main()
 
     return EXIT_SUCCESS;
 }
+*/

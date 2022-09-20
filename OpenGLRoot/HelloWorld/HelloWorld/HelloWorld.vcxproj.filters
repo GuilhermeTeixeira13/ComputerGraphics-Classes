@@ -22,6 +22,9 @@
     <Filter Include="Source Files\P1\TrianglePackage">
       <UniqueIdentifier>{a2687e84-3b93-49b2-a7b5-59b10e5f3c17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\P1\TwoTriangles">
+      <UniqueIdentifier>{61def65f-26f3-4b0c-aded-f1359e19c351}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="window.cpp">
@@ -29,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="triangle.cpp">
       <Filter>Source Files\P1\TrianglePackage</Filter>
+    </ClCompile>
+    <ClCompile Include="twotriangles.cpp">
+      <Filter>Source Files\P1\TwoTriangles</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
