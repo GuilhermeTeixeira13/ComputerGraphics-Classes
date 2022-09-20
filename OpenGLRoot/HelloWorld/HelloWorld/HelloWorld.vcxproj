@@ -134,13 +134,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Downloads\twotriangles\twotriangles\main.cpp" />
     <ClCompile Include="triangle.cpp" />
     <ClCompile Include="window.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\Downloads\twotriangles\twotriangles\SimpleFragmentShader.fragmentshader" />
-    <None Include="..\..\..\..\Downloads\twotriangles\twotriangles\SimpleVertexShader.vertexshader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

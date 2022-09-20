@@ -22,9 +22,6 @@
     <Filter Include="Source Files\P1\TrianglePackage">
       <UniqueIdentifier>{a2687e84-3b93-49b2-a7b5-59b10e5f3c17}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\P1\TwoTriangles">
-      <UniqueIdentifier>{b5bb8420-172d-4aee-b180-d8721704d8a8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="window.cpp">
@@ -33,16 +30,5 @@
     <ClCompile Include="triangle.cpp">
       <Filter>Source Files\P1\TrianglePackage</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Downloads\twotriangles\twotriangles\main.cpp">
-      <Filter>Source Files\P1\TwoTriangles</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\..\Downloads\twotriangles\twotriangles\SimpleFragmentShader.fragmentshader">
-      <Filter>Source Files\P1\TwoTriangles</Filter>
-    </None>
-    <None Include="..\..\..\..\Downloads\twotriangles\twotriangles\SimpleVertexShader.vertexshader">
-      <Filter>Source Files\P1\TwoTriangles</Filter>
-    </None>
   </ItemGroup>
 </Project>
