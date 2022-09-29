@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../External Resources/GLFW/include;$(SolutionDir)/../External Resources/GLEW/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../External Resources/GLFW/include;$(SolutionDir)/../ogl-master;$(SolutionDir)/../External Resources/GLEW/include;$(SolutionDir)/../External Resources/GLM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,9 +134,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="triangle.cpp" />
-    <ClCompile Include="twotriangles.cpp" />
-    <ClCompile Include="window.cpp" />
+    <ClCompile Include="..\..\..\..\..\..\Downloads\twotriangles (1)\twotriangles\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\Downloads\twotriangles (1)\twotriangles\SimpleFragmentShader.fragmentshader" />
+    <None Include="..\..\..\..\..\..\Downloads\twotriangles (1)\twotriangles\SimpleVertexShader.vertexshader" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ogl-master\ogl-master\common\shader.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

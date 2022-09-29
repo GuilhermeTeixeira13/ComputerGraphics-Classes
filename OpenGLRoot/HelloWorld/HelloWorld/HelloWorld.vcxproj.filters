@@ -13,28 +13,23 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\P1">
-      <UniqueIdentifier>{b46fd7d6-bfaa-4138-9d11-d5ef77394a71}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\P1\Window">
-      <UniqueIdentifier>{0e165a53-184a-4af1-bbfc-912e851547f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\P1\TrianglePackage">
-      <UniqueIdentifier>{a2687e84-3b93-49b2-a7b5-59b10e5f3c17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\P1\TwoTriangles">
-      <UniqueIdentifier>{61def65f-26f3-4b0c-aded-f1359e19c351}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="window.cpp">
-      <Filter>Source Files\P1\Window</Filter>
+    <ClCompile Include="..\..\..\..\..\..\Downloads\twotriangles (1)\twotriangles\main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="triangle.cpp">
-      <Filter>Source Files\P1\TrianglePackage</Filter>
-    </ClCompile>
-    <ClCompile Include="twotriangles.cpp">
-      <Filter>Source Files\P1\TwoTriangles</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\Downloads\twotriangles (1)\twotriangles\SimpleFragmentShader.fragmentshader">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\..\..\..\..\..\Downloads\twotriangles (1)\twotriangles\SimpleVertexShader.vertexshader">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ogl-master\ogl-master\common\shader.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
