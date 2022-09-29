@@ -1,0 +1,8 @@
+﻿  movinghouse.cpp
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(207,25): warning C4305: '+=': truncation from 'double' to 'float'
+  Generating code
+  25 of 240 functions (10.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  HelloWorld.vcxproj -> C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\MovingHouse\x64\Release\Pratical Classes.exe
