@@ -1,6 +1,8 @@
 ﻿  house.cpp
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\house.cpp(180,58): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\house.cpp(180,38): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
   Generating code
-  13 of 228 functions ( 5.7%) were compiled, the rest were copied from previous compilation.
+  2 of 228 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

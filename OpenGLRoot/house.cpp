@@ -48,14 +48,14 @@ void transferDataToGPUMemory(void)
         0.0f,  0.0f,  0.0f,
         20.0f, 0.0f,  0.0f,
         20.0f, 20.0f, 0.0f,
+
         0.0f,  0.0f,  0.0f,
         20.0f, 20.0f, 0.0f,
         0.0f,  20.0f, 0.0f,
+
         0.0f,  20.0f, 0.0f,
         20.0f, 20.0f, 0.0f,
-        10.0f, 30.0f, 0.0f,
-        
-        
+        10.0f, 20.0f, 0.0f   
     };
     
     // One color for each vertex. They were generated randomly.
@@ -63,12 +63,14 @@ void transferDataToGPUMemory(void)
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
+
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
+        
         0.0f,  1.0f,  0.0f,
         0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f
     };
     
     // Move vertex data to video memory; specifically to VBO called vertexbuffer
@@ -174,6 +176,8 @@ int main( void )
     
     // render scene for each frame
     do{
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, WindowWidth * 0.5, WindowHeight * 0.5);
         // drawing callback
         draw();
         
