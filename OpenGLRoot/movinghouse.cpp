@@ -450,17 +450,17 @@ int main(void)
 
         // O corpo da casa move-se 10 unidades na diagonal
         if (delta < 10)
-            delta += 0.0005;
+            delta += 0.001;
 
         // A restante parte da casa move-se 20 unidades na diagonal
         if (deltaTelhado < 20)
-            deltaTelhado += 0.0005;
+            deltaTelhado += 0.001;
 
         if (deltaPorta < 20)
-            deltaPorta += 0.0005;
+            deltaPorta += 0.001;
 
         if (deltaJanela < 20)
-            deltaJanela += 0.0005;
+            deltaJanela += 0.001;
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
