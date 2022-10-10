@@ -34,7 +34,7 @@ GLuint programID;
 GLint WindowWidth = 600;
 GLint WindowHeight = 600;
 
-float delta = 0.0;
+float deltaCorpoCasa = 0.0;
 float deltaTelhado = 0.0;
 float deltaPorta = 0.0;
 float deltaJanela = 0.0;
@@ -167,7 +167,7 @@ void drawCorpoCasa(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(delta, delta, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaCorpoCasa+translateX, deltaCorpoCasa+translateY, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -230,7 +230,7 @@ void drawTelhado(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaTelhado, deltaTelhado, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaTelhado+translateX, deltaTelhado+translateY, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -291,7 +291,7 @@ void drawPorta(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaPorta, deltaPorta, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaPorta+translateX, deltaPorta+translateY, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -449,8 +449,8 @@ int main(void)
         glfwPollEvents();
 
         // O corpo da casa move-se 10 unidades na diagonal
-        if (delta < 10)
-            delta += 0.001;
+        if (deltaCorpoCasa < 10)
+            deltaCorpoCasa += 0.001;
 
         // A restante parte da casa move-se 20 unidades na diagonal
         if (deltaTelhado < 20)

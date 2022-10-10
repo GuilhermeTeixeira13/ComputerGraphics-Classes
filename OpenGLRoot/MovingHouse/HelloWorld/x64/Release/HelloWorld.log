@@ -1,10 +1,10 @@
 ﻿  movinghouse.cpp
-C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(453,27): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(453,36): warning C4305: '+=': truncation from 'double' to 'float'
 C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(457,34): warning C4305: '+=': truncation from 'double' to 'float'
 C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(460,32): warning C4305: '+=': truncation from 'double' to 'float'
 C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(463,33): warning C4305: '+=': truncation from 'double' to 'float'
   Generating code
-  1 of 243 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+  4 of 243 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
