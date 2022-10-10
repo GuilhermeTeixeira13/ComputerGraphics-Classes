@@ -16,7 +16,7 @@ GLFWwindow* window;
 using namespace glm;
 
 // shaders header file
-#include <ogl-master/common/shader.hpp>
+#include <common/shader.hpp>
 
 // Vertex array object (VAO)
 GLuint VertexArrayID;
@@ -44,20 +44,39 @@ void transferDataToGPUMemory(void)
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    programID = LoadShaders("C:/Users/guite/OneDrive/Área de Trabalho/ComputerGraphics-UBI/OpenGLRoot/SimpleVertexShader.vertexshader", "C:/Users/guite/OneDrive/Área de Trabalho/ComputerGraphics-UBI/OpenGLRoot/SimpleFragmentShader.fragmentshader");
+    programID = LoadShaders(
+        "C:/shadersCG/MovingHouse/SimpleVertexShader.vertexshader", 
+        "C:/shadersCG/MovingHouse/SimpleFragmentShader.fragmentshader"
+    );
 
 
     static const GLfloat g_vertex_buffer_data[] = {
-        0.0f,  20.0f, 0.0f,
-        20.0f, 20.0f, 0.0f,
-        10.0f, 30.0f, 0.0f,
+         0.0f,  0.0f,  0.0f,
+         20.0f, 0.0f,  0.0f,
+         20.0f, 20.0f, 0.0f,
+
+         0.0f,  0.0f,  0.0f,
+         20.0f, 20.0f, 0.0f,
+         0.0f,  20.0f, 0.0f,
+
+         0.0f,  20.0f, 0.0f,
+         20.0f, 20.0f, 0.0f,
+         10.0f, 30.0f, 0.0f 
     };
 
     // One color for each vertex. They were generated randomly.
     static const GLfloat g_color_buffer_data[] = {
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+
         0.0f,  1.0f,  0.0f,
         0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f
     };
 
     // Move vertex data to video memory; specifically to VBO called vertexbuffer
@@ -105,7 +124,7 @@ void draw(void)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(0, 0, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(delta, delta, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
 
@@ -138,7 +157,7 @@ void draw(void)
     //glEnable(GL_PROGRAM_POINT_SIZE);
     //glPointSize(10);
     // Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
+    glDrawArrays(GL_TRIANGLES, 0, 9); // 3 indices starting at 0 -> 1 triangle
     //glDrawArrays(GL_POINTS, 0, 9); // 3 indices starting at 0 -> 1 triangle
 
     glDisableVertexAttribArray(0);
@@ -172,8 +191,9 @@ int main(void)
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-    // White background
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    // Dark blue background
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // transfer my data (vertices, colors, and shaders) to GPU side
     transferDataToGPUMemory();
@@ -181,9 +201,8 @@ int main(void)
     // render scene for each frame
     do {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, WindowWidth, WindowHeight);
-
-        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+        glViewport(0, 0, WindowWidth*0.5, WindowHeight * 0.5);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         // drawing callback
         draw();
@@ -210,9 +229,5 @@ int main(void)
 
     return 0;
 }
-
-
-
-
 
 
