@@ -1,9 +1,10 @@
 ﻿  movinghouse.cpp
-C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(204,56): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
-C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(204,37): warning C4244: 'argument': conversion from 'double' to 'GLsizei', possible loss of data
-C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(217,25): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(453,28): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(457,35): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(460,33): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\gui\Desktop\Programação\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(463,34): warning C4305: '+=': truncation from 'double' to 'float'
   Generating code
-  3 of 240 functions ( 1.2%) were compiled, the rest were copied from previous compilation.
+  1 of 243 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

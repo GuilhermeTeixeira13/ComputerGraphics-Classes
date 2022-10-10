@@ -31,10 +31,13 @@ GLuint colorbuffer;
 GLuint programID;
 
 
-GLint WindowWidth = 800;
-GLint WindowHeight = 800;
+GLint WindowWidth = 600;
+GLint WindowHeight = 600;
 
 float delta = 0.0;
+float deltaTelhado = 0.0;
+float deltaPorta = 0.0;
+float deltaJanela = 0.0;
 
 //--------------------------------------------------------------------------------
 void transferDataToGPUMemory(void)
@@ -51,6 +54,7 @@ void transferDataToGPUMemory(void)
 
 
     static const GLfloat g_vertex_buffer_data[] = {
+         // Corpo
          0.0f,  0.0f,  0.0f,
          20.0f, 0.0f,  0.0f,
          20.0f, 20.0f, 0.0f,
@@ -59,13 +63,33 @@ void transferDataToGPUMemory(void)
          20.0f, 20.0f, 0.0f,
          0.0f,  20.0f, 0.0f,
 
+         // Telhado
          0.0f,  20.0f, 0.0f,
          20.0f, 20.0f, 0.0f,
-         10.0f, 30.0f, 0.0f 
+         10.0f, 30.0f, 0.0f, 
+
+         // Porta
+         7.5f,  0.0f, 0.0f,
+         12.5f, 0.0f, 0.0f,
+         12.5f, 8.0f, 0.0f, 
+
+         7.5f,  0.0f, 0.0f,
+         12.5f, 8.0f, 0.0f,
+         7.5f, 8.0f, 0.0f,
+
+         // Janela
+         2.0f,  10.0f, 0.0f,
+         5.5f, 10.0f, 0.0f,
+         5.5f, 15.0f, 0.0f,
+
+         2.0f,  10.0f, 0.0f,
+         5.5f, 15.0f, 0.0f,
+         2.0f, 15.0f, 0.0f,
     };
 
     // One color for each vertex. They were generated randomly.
     static const GLfloat g_color_buffer_data[] = {
+        // Corpo
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
@@ -74,9 +98,28 @@ void transferDataToGPUMemory(void)
         1.0f,  0.0f,  0.0f,
         1.0f,  0.0f,  0.0f,
 
+        // Telhado
         0.0f,  1.0f,  0.0f,
         0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f
+        0.0f,  1.0f,  0.0f, 
+
+        // Porta
+        0.4f,  0.2f,  0.0f,
+        0.4f,  0.2f,  0.0f,
+        0.4f,  0.2f,  0.0f,
+
+        0.4f,  0.2f,  0.0f,
+        0.4f,  0.2f,  0.0f,
+        0.4f,  0.2f,  0.0f,
+
+        // Janela
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
+        0.0f,  0.0f,  1.0f,
     };
 
     // Move vertex data to video memory; specifically to VBO called vertexbuffer
@@ -101,7 +144,7 @@ void cleanupDataFromGPU()
 }
 
 //--------------------------------------------------------------------------------
-void draw(void)
+void drawCorpoCasa(float translateX, float translateY)
 {
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
@@ -112,7 +155,7 @@ void draw(void)
     // create transformations
     //glm::mat4 model = glm::mat4(1.0f);
     //glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 mvp = glm::ortho(-40.0f, 40.0f, -40.0f, 40.0f);
+    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
 
     // Our ModelViewProjection : multiplication of our 3 matrices
     //glm::mat4 mvp = projection * view * model;
@@ -126,6 +169,7 @@ void draw(void)
     glm::mat4 trans;
     trans = glm::translate(glm::mat4(1.0), glm::vec3(delta, delta, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
+
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
 
 
@@ -157,7 +201,7 @@ void draw(void)
     //glEnable(GL_PROGRAM_POINT_SIZE);
     //glPointSize(10);
     // Draw the triangle !
-    glDrawArrays(GL_TRIANGLES, 0, 9); // 3 indices starting at 0 -> 1 triangle
+    glDrawArrays(GL_TRIANGLES, 0, 6); // 3 indices starting at 0 -> 1 triangle
     //glDrawArrays(GL_POINTS, 0, 9); // 3 indices starting at 0 -> 1 triangle
 
     glDisableVertexAttribArray(0);
@@ -165,6 +209,190 @@ void draw(void)
 }
 //--------------------------------------------------------------------------------
 
+
+void drawTelhado(float translateX, float translateY)
+{
+    // Use our shader
+    glUseProgram(programID);
+
+    // create transformations
+    //glm::mat4 model = glm::mat4(1.0f);
+    //glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+
+    // Our ModelViewProjection : multiplication of our 3 matrices
+    //glm::mat4 mvp = projection * view * model;
+    // Remember, matrix multiplication is the other way around
+
+    // retrieve the matrix uniform locations
+    unsigned int matrix = glGetUniformLocation(programID, "mvp");
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp[0][0]);
+
+
+    glm::mat4 trans;
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaTelhado, deltaTelhado, 0.0f));
+    unsigned int m = glGetUniformLocation(programID, "trans");
+
+    glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
+
+
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(
+        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+
+    // 2nd attribute buffer : colors
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glVertexAttribPointer(
+        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+        3,                                // size
+        GL_FLOAT,                         // type
+        GL_FALSE,                         // normalized?
+        0,                                // stride
+        (void*)0                          // array buffer offset
+    );
+
+
+    //glEnable(GL_PROGRAM_POINT_SIZE);
+    //glPointSize(10);
+    // Draw the triangle !
+    glDrawArrays(GL_TRIANGLES, 6, 3); // 3 indices starting at 0 -> 1 triangle
+    //glDrawArrays(GL_POINTS, 0, 9); // 3 indices starting at 0 -> 1 triangle
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+}
+
+void drawPorta(float translateX, float translateY)
+{
+    // Use our shader
+    glUseProgram(programID);
+
+    // create transformations
+    //glm::mat4 model = glm::mat4(1.0f);
+    //glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+
+    // Our ModelViewProjection : multiplication of our 3 matrices
+    //glm::mat4 mvp = projection * view * model;
+    // Remember, matrix multiplication is the other way around
+
+    // retrieve the matrix uniform locations
+    unsigned int matrix = glGetUniformLocation(programID, "mvp");
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp[0][0]);
+
+
+    glm::mat4 trans;
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaPorta, deltaPorta, 0.0f));
+    unsigned int m = glGetUniformLocation(programID, "trans");
+
+    glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
+
+
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(
+        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+
+    // 2nd attribute buffer : colors
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glVertexAttribPointer(
+        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+        3,                                // size
+        GL_FLOAT,                         // type
+        GL_FALSE,                         // normalized?
+        0,                                // stride
+        (void*)0                          // array buffer offset
+    );
+
+
+    //glEnable(GL_PROGRAM_POINT_SIZE);
+    //glPointSize(10);
+    // Draw the triangle !
+    glDrawArrays(GL_TRIANGLES, 9, 6); // 3 indices starting at 0 -> 1 triangle
+    //glDrawArrays(GL_POINTS, 0, 9); // 3 indices starting at 0 -> 1 triangle
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+}
+
+
+void drawJanela(float translateX, float translateY)
+{
+    // Use our shader
+    glUseProgram(programID);
+
+    // create transformations
+    //glm::mat4 model = glm::mat4(1.0f);
+    //glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+
+    // Our ModelViewProjection : multiplication of our 3 matrices
+    //glm::mat4 mvp = projection * view * model;
+    // Remember, matrix multiplication is the other way around
+
+    // retrieve the matrix uniform locations
+    unsigned int matrix = glGetUniformLocation(programID, "mvp");
+    glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp[0][0]);
+
+
+    glm::mat4 trans;
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaJanela+translateX, deltaJanela+translateY, 0.0f));
+    unsigned int m = glGetUniformLocation(programID, "trans");
+
+    glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
+
+
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(
+        0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+        3,                  // size
+        GL_FLOAT,           // type
+        GL_FALSE,           // normalized?
+        0,                  // stride
+        (void*)0            // array buffer offset
+    );
+
+    // 2nd attribute buffer : colors
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    glVertexAttribPointer(
+        1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+        3,                                // size
+        GL_FLOAT,                         // type
+        GL_FALSE,                         // normalized?
+        0,                                // stride
+        (void*)0                          // array buffer offset
+    );
+
+
+    //glEnable(GL_PROGRAM_POINT_SIZE);
+    //glPointSize(10);
+    // Draw the triangle !
+    glDrawArrays(GL_TRIANGLES, 15, 6); // 3 indices starting at 0 -> 1 triangle
+    //glDrawArrays(GL_POINTS, 0, 9); // 3 indices starting at 0 -> 1 triangle
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+}
 
 
 int main(void)
@@ -201,11 +429,18 @@ int main(void)
     // render scene for each frame
     do {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, WindowWidth*0.5, WindowHeight * 0.5);
+        glViewport(0, 0, WindowWidth, WindowHeight);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // drawing callback
-        draw();
+        drawCorpoCasa(0.0f, 0.0f);
+        drawTelhado(0.0f, 0.0f);
+        drawPorta(0.0f, 0.0f);
+
+        drawJanela(0.0f, 0.0f);
+
+        // A segunda janela irá ficar 12.5 unidades à direita da primeira
+        drawJanela(12.5f, 0.0f);
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -213,8 +448,19 @@ int main(void)
         // looking for events
         glfwPollEvents();
 
+        // O corpo da casa move-se 10 unidades na diagonal
         if (delta < 10)
-            delta += 0.1;
+            delta += 0.0005;
+
+        // A restante parte da casa move-se 20 unidades na diagonal
+        if (deltaTelhado < 20)
+            deltaTelhado += 0.0005;
+
+        if (deltaPorta < 20)
+            deltaPorta += 0.0005;
+
+        if (deltaJanela < 20)
+            deltaJanela += 0.0005;
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
