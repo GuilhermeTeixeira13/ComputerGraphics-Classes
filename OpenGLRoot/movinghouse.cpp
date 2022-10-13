@@ -1,6 +1,8 @@
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
+#include<iostream>
+using namespace std;
 
 // Include GLEW
 #include <GL/glew.h>
@@ -38,6 +40,7 @@ float deltaCorpoCasa = 0.0;
 float deltaTelhado = 0.0;
 float deltaPorta = 0.0;
 float deltaJanela = 0.0;
+int sobe = 1;
 
 //--------------------------------------------------------------------------------
 void transferDataToGPUMemory(void)
@@ -447,16 +450,35 @@ int main(void)
         // looking for events
         glfwPollEvents();
 
-        // O corpo da casa move-se 10 unidades na diagonal
-        if (deltaCorpoCasa < 10)
-            deltaCorpoCasa += 0.002;
+        // Sobe
 
-        // A restante parte da casa move-se 30 unidades na diagonal
-        if (deltaTelhado < 30 && deltaPorta < 30 && deltaPorta < 30) {
-            deltaTelhado += 0.002;
-            deltaPorta += 0.002;
-            deltaJanela += 0.002;
+        if (sobe == 1) {
+            // O corpo da casa move-se 10 unidades na diagonal
+            if (deltaCorpoCasa < 10)
+                deltaCorpoCasa += 0.002;
+
+            // A restante parte da casa move-se 30 unidades na diagonal
+            if (deltaTelhado <= 30 && deltaPorta <= 30 && deltaJanela <= 30) {
+                deltaTelhado += 0.002;
+                deltaPorta += 0.002;
+                deltaJanela += 0.002;
+            }
         }
+
+        // Desce
+
+        if (deltaTelhado > 30)
+            sobe = 0;
+        
+        if (sobe == 0){
+            if (deltaTelhado > 10 && deltaPorta > 10 && deltaJanela > 10) {
+                deltaTelhado -= 0.002;
+                deltaPorta -= 0.002;
+                deltaJanela -= 0.002;
+            }
+        }
+
+
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
