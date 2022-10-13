@@ -144,7 +144,7 @@ void cleanupDataFromGPU()
 }
 
 //--------------------------------------------------------------------------------
-void drawCorpoCasa(float translateX, float translateY)
+void drawCorpoCasa(float varx, float vary)
 {
     // Clear the screen
     glClear(GL_COLOR_BUFFER_BIT);
@@ -155,7 +155,7 @@ void drawCorpoCasa(float translateX, float translateY)
     // create transformations
     //glm::mat4 model = glm::mat4(1.0f);
     //glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+    glm::mat4 mvp = glm::ortho(0.0f, 60.0f, 0.0f, 60.0f);
 
     // Our ModelViewProjection : multiplication of our 3 matrices
     //glm::mat4 mvp = projection * view * model;
@@ -167,7 +167,7 @@ void drawCorpoCasa(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaCorpoCasa+translateX, deltaCorpoCasa+translateY, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(varx, vary, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -210,7 +210,7 @@ void drawCorpoCasa(float translateX, float translateY)
 //--------------------------------------------------------------------------------
 
 
-void drawTelhado(float translateX, float translateY)
+void drawTelhado(float varx, float vary)
 {
     // Use our shader
     glUseProgram(programID);
@@ -218,7 +218,7 @@ void drawTelhado(float translateX, float translateY)
     // create transformations
     //glm::mat4 model = glm::mat4(1.0f);
     //glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+    glm::mat4 mvp = glm::ortho(0.0f, 60.0f, 0.0f, 60.0f);
 
     // Our ModelViewProjection : multiplication of our 3 matrices
     //glm::mat4 mvp = projection * view * model;
@@ -230,7 +230,7 @@ void drawTelhado(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaTelhado+translateX, deltaTelhado+translateY, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(varx, vary, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -271,7 +271,7 @@ void drawTelhado(float translateX, float translateY)
     glDisableVertexAttribArray(1);
 }
 
-void drawPorta(float translateX, float translateY)
+void drawPorta(float varx, float vary)
 {
     // Use our shader
     glUseProgram(programID);
@@ -279,7 +279,7 @@ void drawPorta(float translateX, float translateY)
     // create transformations
     //glm::mat4 model = glm::mat4(1.0f);
     //glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+    glm::mat4 mvp = glm::ortho(0.0f, 60.0f, 0.0f, 60.0f);
 
     // Our ModelViewProjection : multiplication of our 3 matrices
     //glm::mat4 mvp = projection * view * model;
@@ -291,7 +291,7 @@ void drawPorta(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaPorta+translateX, deltaPorta+translateY, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(varx, vary, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -333,7 +333,7 @@ void drawPorta(float translateX, float translateY)
 }
 
 
-void drawJanela(float translateX, float translateY)
+void drawJanela(float varx, float vary)
 {
     // Use our shader
     glUseProgram(programID);
@@ -341,7 +341,7 @@ void drawJanela(float translateX, float translateY)
     // create transformations
     //glm::mat4 model = glm::mat4(1.0f);
     //glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 mvp = glm::ortho(-60.0f, 60.0f, -60.0f, 60.0f);
+    glm::mat4 mvp = glm::ortho(0.0f, 60.0f, 0.0f, 60.0f);
 
     // Our ModelViewProjection : multiplication of our 3 matrices
     //glm::mat4 mvp = projection * view * model;
@@ -353,7 +353,7 @@ void drawJanela(float translateX, float translateY)
 
 
     glm::mat4 trans;
-    trans = glm::translate(glm::mat4(1.0), glm::vec3(deltaJanela+translateX, deltaJanela+translateY, 0.0f));
+    trans = glm::translate(glm::mat4(1.0), glm::vec3(varx, vary, 0.0f));
     unsigned int m = glGetUniformLocation(programID, "trans");
 
     glUniformMatrix4fv(m, 1, GL_FALSE, &trans[0][0]);
@@ -433,14 +433,13 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // drawing callback
-        drawCorpoCasa(0.0f, 0.0f);
-        drawTelhado(0.0f, 0.0f);
-        drawPorta(0.0f, 0.0f);
+        drawCorpoCasa(deltaCorpoCasa, deltaCorpoCasa);
+        drawTelhado(deltaTelhado, deltaTelhado);
+        drawPorta(deltaPorta, deltaPorta);
 
-        drawJanela(0.0f, 0.0f);
-
+        drawJanela(deltaJanela, deltaJanela);
         // A segunda janela irá ficar 12.5 unidades à direita da primeira
-        drawJanela(12.5f, 0.0f);
+        drawJanela(12.5f + deltaJanela, deltaJanela);
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -450,17 +449,14 @@ int main(void)
 
         // O corpo da casa move-se 10 unidades na diagonal
         if (deltaCorpoCasa < 10)
-            deltaCorpoCasa += 0.001;
+            deltaCorpoCasa += 0.002;
 
-        // A restante parte da casa move-se 20 unidades na diagonal
-        if (deltaTelhado < 20)
-            deltaTelhado += 0.001;
-
-        if (deltaPorta < 20)
-            deltaPorta += 0.001;
-
-        if (deltaJanela < 20)
-            deltaJanela += 0.001;
+        // A restante parte da casa move-se 30 unidades na diagonal
+        if (deltaTelhado < 30 && deltaPorta < 30 && deltaPorta < 30) {
+            deltaTelhado += 0.002;
+            deltaPorta += 0.002;
+            deltaJanela += 0.002;
+        }
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
