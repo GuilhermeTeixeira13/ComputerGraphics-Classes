@@ -12,6 +12,8 @@
 #include <math.h>
 
 #include <iostream>
+using namespace std;
+
 
 // Include GLEW
 #include <GL/glew.h>
@@ -45,45 +47,67 @@ GLuint programID;
 #define SCREEN_WIDTH 1000
 #define SCREEN_HEIGHT 900
 
+const int steps = 360;
 
 
 
 //--------------------------------------------------------------------------------
 void transferDataToGPUMemory(void)
 {
-    GLfloat x = -20.0f; // xmin of the domain
-    
+    GLfloat x = 0.0f; // xmin of the domain
+    GLfloat y = 0.0f;
+    GLfloat radius = 1.0f;
+    GLfloat angle  = 3.1415926f * 2.0f / steps;
+    GLfloat prevX = 1.0f;
+    GLfloat prevY = 0.0f;
+
     // VAO
     glGenVertexArrays(1, &VertexArrayID);
     glBindVertexArray(VertexArrayID);
     
     // Create and compile our GLSL program from the shaders
-    programID = LoadShaders("C:/Users/guite/OneDrive/Área de Trabalho/ComputerGraphics-UBI/OpenGLRoot/SimpleVertexShader.vertexshader", "C:/Users/guite/OneDrive/Área de Trabalho/ComputerGraphics-UBI/OpenGLRoot/SimpleFragmentShader.fragmentshader");
+    programID = LoadShaders("C:/shadersCG/Sinc/SimpleVertexShader.vertexshader", "C:/shadersCG/Sinc/SimpleFragmentShader.fragmentshader");
 
     
-    GLfloat g_vertex_buffer_data[200*3];
-    for (int i = 0; i < 200; i++)// i<80 pois como vai de -10 a 10 e anda 0.25 é fazer 20/0.25=8
+    GLfloat g_vertex_buffer_data[steps * 9];
+    for (int i = 0; i < steps; i++)
     {
-        g_vertex_buffer_data[i * 3] = x;
+        GLfloat newX = radius + sin(angle * i);
+        GLfloat newY = -radius + cos(angle * i);
 
-        if ( (x > -0.01f) && (x < 0.01f) )
-            g_vertex_buffer_data[(i * 3) + 1] = 1;
-        else
-            g_vertex_buffer_data[(i * 3) + 1] = sinf(x)/x;
-        
-        g_vertex_buffer_data[(i * 3) + 2] = 0;
-        x = x + 0.2f;
+        g_vertex_buffer_data[(i * 3)] = 0.0f;
+        g_vertex_buffer_data[(i * 3) + 1] = 0.0f;
+        g_vertex_buffer_data[(i * 3) + 2] = 0.0f;
 
+        g_vertex_buffer_data[(i * 3) + 3] = newX;
+        g_vertex_buffer_data[(i * 3) + 4] = newY;  
+        g_vertex_buffer_data[(i * 3) + 5] = 0.0f;
+        cout << "(" << newX << ", " << newY << ")\n";
+
+        g_vertex_buffer_data[(i * 3) + 6] = prevX;
+        g_vertex_buffer_data[(i * 3) + 7] = prevY;
+        g_vertex_buffer_data[(i * 3) + 8] = 0.0f;
+        //cout << "(" << prevX << ", " << prevY << ")\n";
+
+        prevX = newX;
+        prevY = newY;
     }
     
 
-    GLfloat g_color_buffer_data[200*3];
-    for (int i = 0; i < 200; i++)// i<80 pois como vai de -10 a 10 e anda 0.25 é fazer 20/0.25=8
-    {
-        
+    GLfloat g_color_buffer_data[steps*9];
+    for (int i = 0; i < steps; i++)
+    {  
         g_color_buffer_data[i * 3] = 1.0f;
         g_color_buffer_data[(i * 3) + 1] = 0.0f;
         g_color_buffer_data[(i * 3) + 2] = 0.0f;
+
+        g_color_buffer_data[(i * 3) + 3] = 1.0f;
+        g_color_buffer_data[(i * 3) + 4] = 0.0f;
+        g_color_buffer_data[(i * 3) + 5] = 0.0f;
+
+        g_color_buffer_data[(i * 3) + 6] = 1.0f;
+        g_color_buffer_data[(i * 3) + 7] = 0.0f;
+        g_color_buffer_data[(i * 3) + 8] = 0.0f;
     }
 
     
@@ -121,7 +145,7 @@ void draw (void)
     glUseProgram(programID);
     
     // create domain in R^2
-    glm::mat4 mvp = glm::ortho(-20.0f, 20.0f, -1.0f, 1.5f);
+    glm::mat4 mvp = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f);
     // retrieve the matrix uniform locations
     unsigned int matrix = glGetUniformLocation(programID, "mvp");
     glUniformMatrix4fv(matrix, 1, GL_FALSE, &mvp[0][0]);
@@ -156,7 +180,7 @@ void draw (void)
     glEnable(GL_PROGRAM_POINT_SIZE);
     //glPointSize(10);
     // Draw the triangle !
-    glDrawArrays(GL_LINE_STRIP, 0, 200); // 3 indices starting at 0 -> 1 triangle
+    glDrawArrays(GL_TRIANGLE_FAN, 0, steps * 9); // 3 indices starting at 0 -> 1 triangle
     //glDrawArrays(GL_POINTS, 0, 80); // 3 indices starting at 0 -> 1 triangle
     
     glDisableVertexAttribArray(0);
