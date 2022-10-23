@@ -440,8 +440,9 @@ int main(void)
         drawTelhado(deltaTelhado, deltaTelhado);
         drawPorta(deltaPorta, deltaPorta);
 
+        // Na segunda janela, o x está sempre 12.5 unidades à frente do da primeira janela
+        // e o y mantem - se, o que faz com que elas fiquem lado a lado, separadas por 12.5 uinidades.
         drawJanela(deltaJanela, deltaJanela);
-        // A segunda janela irá ficar 12.5 unidades à direita da primeira
         drawJanela(12.5f + deltaJanela, deltaJanela);
 
         // Swap buffers
@@ -471,6 +472,7 @@ int main(void)
             sobe = 0;
         
         if (sobe == 0){
+            // Desce até ao delta=10 onde há a separação
             if (deltaTelhado > 10 && deltaPorta > 10 && deltaJanela > 10) {
                 deltaTelhado -= 0.002;
                 deltaPorta -= 0.002;
