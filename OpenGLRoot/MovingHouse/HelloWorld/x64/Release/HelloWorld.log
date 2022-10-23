@@ -1,10 +1,13 @@
 ﻿  movinghouse.cpp
-C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(453,36): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(457,34): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(460,32): warning C4305: '+=': truncation from 'double' to 'float'
-C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(463,33): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(458,40): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(462,38): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(463,36): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(464,37): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(475,38): warning C4305: '-=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(476,36): warning C4305: '-=': truncation from 'double' to 'float'
+C:\Users\guite\OneDrive\Área de Trabalho\ComputerGraphics-UBI\OpenGLRoot\movinghouse.cpp(477,37): warning C4305: '-=': truncation from 'double' to 'float'
   Generating code
-  4 of 243 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+  1 of 243 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
