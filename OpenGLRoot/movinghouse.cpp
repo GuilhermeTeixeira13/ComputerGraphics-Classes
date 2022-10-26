@@ -33,13 +33,11 @@ GLuint colorbuffer;
 GLuint programID;
 
 
-GLint WindowWidth = 600;
-GLint WindowHeight = 600;
+GLint WindowWidth = 1200;
+GLint WindowHeight = 800;
 
 float deltaCorpoCasa = 0.0;
-float deltaTelhado = 0.0;
-float deltaPorta = 0.0;
-float deltaJanela = 0.0;
+float deltaElementos = 0.0;
 int sobe = 1;
 
 //--------------------------------------------------------------------------------
@@ -437,13 +435,13 @@ int main(void)
 
         // drawing callback
         drawCorpoCasa(deltaCorpoCasa, deltaCorpoCasa);
-        drawTelhado(deltaTelhado, deltaTelhado);
-        drawPorta(deltaPorta, deltaPorta);
+        drawTelhado(deltaElementos, deltaElementos);
+        drawPorta(deltaElementos, deltaElementos);
 
         // Na segunda janela, o x está sempre 12.5 unidades à frente do da primeira janela
         // e o y mantem - se, o que faz com que elas fiquem lado a lado, separadas por 12.5 uinidades.
-        drawJanela(deltaJanela, deltaJanela);
-        drawJanela(12.5f + deltaJanela, deltaJanela);
+        drawJanela(deltaElementos, deltaElementos);
+        drawJanela(12.5f + deltaElementos, deltaElementos);
 
         // Swap buffers
         glfwSwapBuffers(window);
@@ -456,27 +454,23 @@ int main(void)
         if (sobe == 1) {
             // O corpo da casa move-se 10 unidades na diagonal
             if (deltaCorpoCasa < 10)
-                deltaCorpoCasa += 0.002;
+                deltaCorpoCasa += 0.008;
 
             // A restante parte da casa move-se 30 unidades na diagonal
-            if (deltaTelhado <= 30 && deltaPorta <= 30 && deltaJanela <= 30) {
-                deltaTelhado += 0.002;
-                deltaPorta += 0.002;
-                deltaJanela += 0.002;
+            if (deltaElementos <= 30) {
+                deltaElementos += 0.008;
             }
         }
 
         // Desce
 
-        if (deltaTelhado > 30)
+        if (deltaElementos > 30)
             sobe = 0;
         
         if (sobe == 0){
             // Desce até ao delta=10 onde há a separação
-            if (deltaTelhado > 10 && deltaPorta > 10 && deltaJanela > 10) {
-                deltaTelhado -= 0.002;
-                deltaPorta -= 0.002;
-                deltaJanela -= 0.002;
+            if (deltaElementos > 10) {
+                deltaElementos -= 0.008;
             }
         }
 
