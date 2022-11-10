@@ -454,11 +454,11 @@ int main(void)
         if (sobe == 1) {
             // O corpo da casa move-se 10 unidades na diagonal
             if (deltaCorpoCasa < 10)
-                deltaCorpoCasa += 0.008;
+                deltaCorpoCasa += 0.001;
 
             // A restante parte da casa move-se 30 unidades na diagonal
             if (deltaElementos <= 30) {
-                deltaElementos += 0.008;
+                deltaElementos += 0.001;
             }
         }
 
@@ -470,7 +470,7 @@ int main(void)
         if (sobe == 0){
             // Desce até ao delta=10 onde há a separação
             if (deltaElementos > 10) {
-                deltaElementos -= 0.008;
+                deltaElementos -= 0.001;
             }
         }
 
