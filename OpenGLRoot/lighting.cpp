@@ -9,6 +9,9 @@
 #include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\camera.h>
 
 #include <iostream>
+using namespace std;
+
+#include <math.h>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -23,6 +26,7 @@ const unsigned int SCR_HEIGHT = 600;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
+double twicePi = 2.0 * 3.142;
 bool firstMouse = true;
 
 // timing
@@ -31,6 +35,12 @@ float lastFrame = 0.0f;
 
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
+float ambientOption = 1.0f;
+float diffuseOption = 1.0f;
+float specularOption = 1.0f;
+float ambientStrength = 0.2f;
+float specularStrength = 0.8f;
 
 int main()
 {
@@ -172,11 +182,20 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // lighting
+        glm::vec3 lightPos((1.5f * cos(currentFrame * twicePi / 20)), 0.0f, (1.5f * sin(currentFrame * twicePi / 20)));
+
+
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
+        lightingShader.setFloat("ambientOption", ambientOption);
+        lightingShader.setFloat("diffuseOption", diffuseOption);
+        lightingShader.setFloat("specularOption", specularOption);
+        lightingShader.setFloat("ambientStrength", ambientStrength);
+        lightingShader.setFloat("specularStrength", specularStrength);
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -230,7 +249,6 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -239,6 +257,18 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+        ambientOption = 0;
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
+        ambientOption = 1;
+    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        diffuseOption = 0;
+    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_RELEASE)
+        diffuseOption = 1;
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        specularOption = 0;
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE)
+        specularOption = 1;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
