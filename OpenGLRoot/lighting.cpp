@@ -36,11 +36,13 @@ float lastFrame = 0.0f;
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
+// Variáveis para as opções de mostrar ao não a luz ambiente/disusa/especular
 float ambientOption = 1.0f;
 float diffuseOption = 1.0f;
 float specularOption = 1.0f;
-float ambientStrength = 0.2f;
-float specularStrength = 0.8f;
+// Variáveis para as modificar as características da luz
+float ambientStrength = 0.1f;
+float specularStrength = 0.5f;
 
 int main()
 {
@@ -182,15 +184,16 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // lighting
+        // lighting - going around the (0,0,0) -> center of the big cube
         glm::vec3 lightPos((1.5f * cos(currentFrame * twicePi / 20)), 0.0f, (1.5f * sin(currentFrame * twicePi / 20)));
-
 
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
-        lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("objectColor", sin(currentFrame)+1, cos(currentFrame) + 1, 0.5f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
+
+        // Passing light type/strength options to the shader
         lightingShader.setFloat("ambientOption", ambientOption);
         lightingShader.setFloat("diffuseOption", diffuseOption);
         lightingShader.setFloat("specularOption", specularOption);
@@ -257,6 +260,11 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    // I -> Remove ambient light
+    // O -> Remove diffuse light
+    // P -> Remove specular light
+
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
         ambientOption = 0;
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)

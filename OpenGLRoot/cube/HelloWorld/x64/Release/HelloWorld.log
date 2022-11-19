@@ -1,13 +1,13 @@
 ﻿  lighting.cpp
 C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\shader_m.h(56,40): warning C4101: 'e': unreferenced local variable
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(172,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(290,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(174,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(291,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(295,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(292,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(296,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(298,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(297,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(299,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(308,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(300,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(309,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Generating code
   1 of 585 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
