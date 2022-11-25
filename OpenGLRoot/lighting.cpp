@@ -1,4 +1,20 @@
-﻿#include <include\glad\glad.h>
+﻿/*
+
+1. To get a better understanding of Phong's lighting model, move the light source around 
+the scene over time.This movement can be accomplished using either sin or cos.
+
+ --->  2. Additionally, experiment with different ambient, diffuseand specular light factors(or
+    strengths), trying to grasp how they impact the result.Also play around with distinct
+    shininess factors.
+
+5. Change the properties of the object’s color over time.This is equivalent to change the
+    values RGB of the object in the scene.Note that reds, green, and blues are in the interval
+    [0, 1].
+    
+ */
+
+
+#include <include\glad\glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -88,8 +104,8 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader lightingShader("C:/shadersCG/lighting/2.1.basic_lighting.vs", "C:/shadersCG/lighting/2.1.basic_lighting.fs");
-    Shader lampShader("C:/shadersCG/lighting/2.1.lamp.vs", "C:/shadersCG/lighting/2.1.lamp.fs");
+    Shader lightingShader("C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.basic_lighting.vs", "C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.basic_lighting.fs");
+    Shader lampShader("C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.lamp.vs", "C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.lamp.fs");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
