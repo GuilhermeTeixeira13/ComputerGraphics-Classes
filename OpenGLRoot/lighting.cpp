@@ -52,13 +52,15 @@ float lastFrame = 0.0f;
 // lighting
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
-// Variáveis para as opções de mostrar ao não a luz ambiente/disusa/especular
+// Variables to turn on/off ambient/diffuse/specular light
 float ambientOption = 1.0f;
 float diffuseOption = 1.0f;
 float specularOption = 1.0f;
-// Variáveis para as modificar as características da luz
+// Variables to change the strength of ambient and specular light
 float ambientStrength = 0.1f;
 float specularStrength = 0.5f;
+// Variables to change the shininess factor
+float shininessFactor = 32.0f;
 
 int main()
 {
@@ -203,18 +205,36 @@ int main()
         // lighting - going around the (0,0,0) -> center of the big cube
         glm::vec3 lightPos((1.5f * cos(currentFrame * twicePi / 20)), 0.0f, (1.5f * sin(currentFrame * twicePi / 20)));
 
+        // Limit variables values
+
+        if (ambientStrength > 1.0f)
+            ambientStrength = 1.0f;
+        if (ambientStrength < 0.0f)
+            ambientStrength = 0.0f;
+
+        if (specularStrength > 1.0f)
+            specularStrength = 1.0f;
+        if (specularStrength < 0.0f)
+            specularStrength = 0.0f;
+
+        if (shininessFactor < 0.0f)
+            shininessFactor = 0.0f;
+        if (shininessFactor > 100.0f)
+            shininessFactor = 100.0f;
+
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
         lightingShader.setVec3("objectColor", sin(currentFrame)+1, cos(currentFrame) + 1, 0.5f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
 
-        // Passing light type/strength options to the shader
+        // Passing light type/strength/shininess options to the shader
         lightingShader.setFloat("ambientOption", ambientOption);
         lightingShader.setFloat("diffuseOption", diffuseOption);
         lightingShader.setFloat("specularOption", specularOption);
         lightingShader.setFloat("ambientStrength", ambientStrength);
         lightingShader.setFloat("specularStrength", specularStrength);
+        lightingShader.setFloat("shininessFactor", shininessFactor);
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -229,7 +249,6 @@ int main()
         // render the cube
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
 
         // also draw the lamp object
         lampShader.use();
@@ -293,6 +312,25 @@ void processInput(GLFWwindow* window)
         specularOption = 0;
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE)
         specularOption = 1;
+
+    // J/N -> Increase/Decrease ambient strenght
+    // K/M -> Increase/Decrease specular strenght
+
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+        ambientStrength += 0.001f;
+    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+        ambientStrength -= 0.001f;
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+        specularStrength += 0.001f;
+    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+        specularStrength -= 0.001f;
+
+    // H/B -> Increase/Decrease shininess factor
+
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+        shininessFactor+= 0.1f;
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        shininessFactor -= 0.1f;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

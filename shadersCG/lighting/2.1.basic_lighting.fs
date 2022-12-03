@@ -14,6 +14,7 @@ uniform float diffuseOption;
 uniform float specularOption;
 uniform float ambientStrength;
 uniform float specularStrength;
+uniform float shininessFactor;
 
 void main()
 {
@@ -36,7 +37,7 @@ void main()
     vec3 specular = vec3(0.0, 0.0, 0.0);
     vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
     vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininessFactor);
     if(specularOption > 0.5){
         specular = specularStrength * spec * lightColor; 
     }
