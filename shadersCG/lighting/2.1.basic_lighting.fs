@@ -7,6 +7,7 @@ in vec3 FragPos;
 uniform vec3 lightPos; 
 uniform vec3 lightColor;
 uniform vec3 objectColor;
+uniform vec3 viewPos;
 
 // Variables to controle light
 uniform float ambientOption;
@@ -35,8 +36,8 @@ void main()
 
     // specular -> If specularOption == 1, then calculate specular, else specular = 0.
     vec3 specular = vec3(0.0, 0.0, 0.0);
-    vec3 viewDir = normalize(-FragPos); // the viewer is always at (0,0,0) in view-space, so viewDir is (0,0,0) - Position => -Position
-    vec3 reflectDir = reflect(-lightDir, norm);  
+    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);   
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininessFactor);
     if(specularOption > 0.5){
         specular = specularStrength * spec * lightColor; 

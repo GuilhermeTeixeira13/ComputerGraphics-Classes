@@ -227,6 +227,7 @@ int main()
         lightingShader.setVec3("objectColor", sin(currentFrame)+1, cos(currentFrame) + 1, 0.5f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
+        lightingShader.setVec3("viewPos", camera.Position);
 
         // Passing light type/strength/shininess options to the shader
         lightingShader.setFloat("ambientOption", ambientOption);
