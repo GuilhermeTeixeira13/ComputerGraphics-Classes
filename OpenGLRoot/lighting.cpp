@@ -5,7 +5,6 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 #include"C:\ComputerGraphics-UBI\OpenGLRoot\cube\HelloWorld\textFile.h"
-#include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\camera.h>
 
 double deltaTime = 0, nowTime = 0, lastTime = 0;
 
@@ -34,7 +33,7 @@ namespace GLMAIN {
         {0.0f, 0.0f , 0.0f}
     };
     // Store the radius of 6 spheres
-    float planerRadius[9] = { 109.0f, 0.33f, 0.94f, 1.0f, 0.53f, 11.0f , 9.0f , 4.0f , 4.0f };
+    float planerRadius[9] = { 1.0f, 0.33f, 0.94f, 1.0f, 0.53f, 11.0f , 9.0f , 4.0f , 4.0f };
     // Store the rotate speed of 6 spheres
     float planetSpeed[9] = { 0.0f, 4.14f, 1.629f, 1.0f, 0.532, 0.0884f, 0.033f , 0.0119f, 0.0061f };
     // Store the angles of 6 spheres
@@ -121,9 +120,6 @@ void initPerspective(glm::mat4& m)
     m[3][3] = 0.0f;
 }
 
-// camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-
 // Display method, draw six spheres.
 void display(void)
 {
@@ -134,14 +130,35 @@ void display(void)
     glm::mat4  projectionMatrix;
     initPerspective(projectionMatrix);
 
-    // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / (float)800, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
 
-    glm::mat4 modelViewMareix = view * modelMatrix;
+    // Init view matrix
+    const glm::vec3 camPos(-600, 0, 10);// camera position
+    const glm::vec3 lookAt(0.0, 0.0, 0.0);
+    const glm::vec3 camOffset = lookAt - camPos;
+    const glm::vec3 camForward = camOffset /
+        glm::length(camOffset);
+    const glm::vec3 camUp0(.0f, 0.0f, -1.0f);
+    const glm::vec3 camRight = glm::cross(camForward, camUp0);
+    const glm::vec3 camUp = glm::cross(camRight, camForward);
 
-    // model - view - projection matrix
-    mvp = projectionMatrix * view * modelMatrix;
+    const glm::mat4 viewRotation(
+        camRight.x, camUp.x, camForward.
+        x, 0.f, // column 0
+        camRight.y, camUp.y, camForward.
+        y, 0.f, // column 1
+        camRight.z, camUp.z, camForward.
+        z, 0.f, // column 2
+        0.f, 0.f, 0.f, 1.f);// column 3
+    const glm::mat4 viewTranslation(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        camPos.x, camPos.y, camPos.z, 1);
+    glm::mat4 viewMatrix = viewRotation * viewTranslation;
+    glm::mat4 modelViewMareix = viewMatrix * modelMatrix;
+
+    // model -view - projection matrix
+    mvp = projectionMatrix * viewMatrix * modelMatrix;
 
 
     // Set uniform  mvp
@@ -358,19 +375,6 @@ void keyfunc(GLFWwindow* window, int key, int scancode, int action, int mods)
     }
 }
 
-
-void processInput(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-}
-
 // Mark the max value of RGB components, for example, maxFlag of RGB[255,0,0] is [1,0,0]
 void getMaxFlagfromRGB(bool maxFlag[], float RGB[3])
 {
@@ -446,7 +450,6 @@ void updateHighlightSphere()
 // If the frame buffer is resized by resing the window, update viewport and frameBufferWidth/frameBufferHeight
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-
     glViewport(0, 0, width, height);
     GLMAIN::frameBufferWidth = width;
     GLMAIN::frameBufferHeight = height;
@@ -479,7 +482,7 @@ int main(int argc, char* argv[])
     setShaders();
     initVAO();
 
-    static double limitFPS = 1.0 / 30.0; // limit to 30 frames per second
+    static double limitFPS = 1.0 / 60.0; // limit to 30 frames per second
     lastTime = glfwGetTime();
     deltaTime = 0, nowTime = 0;
 
@@ -497,7 +500,6 @@ int main(int argc, char* argv[])
         while (deltaTime >= 1.0) {
             deltaTime--;
         }
-
         calcLocations();
         display(); //  Render function
     }

@@ -1,2 +1,11 @@
 ﻿  lighting.cpp
-C:\ComputerGraphics-UBI\OpenGLRoot\External Resources\glad\include\glad\glad.h(601,1): fatal  error C1189: #error:  OpenGL header already included, remove this include, glad already provides it
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(38,99): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(90,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(414,47): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(414,18): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+  Generating code
+  2 of 57 functions ( 3.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  HelloWorld.vcxproj -> C:\ComputerGraphics-UBI\OpenGLRoot\cube\x64\Release\Pratical Classes.exe

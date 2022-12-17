@@ -1,7 +1,8 @@
+#pragma once
+
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <C:\ComputerGraphics-UBI\OpenGLRoot\External Resources\glad\include\glad\glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
