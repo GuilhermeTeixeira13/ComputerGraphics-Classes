@@ -1,16 +1,2 @@
 ﻿  lighting.cpp
-C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\shader_m.h(56,40): warning C4101: 'e': unreferenced local variable
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(192,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(353,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(354,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(358,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(359,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(361,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(362,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(371,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Generating code
-  2 of 585 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    6 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  HelloWorld.vcxproj -> C:\ComputerGraphics-UBI\OpenGLRoot\cube\x64\Release\Pratical Classes.exe
+C:\ComputerGraphics-UBI\OpenGLRoot\External Resources\glad\include\glad\glad.h(601,1): fatal  error C1189: #error:  OpenGL header already included, remove this include, glad already provides it

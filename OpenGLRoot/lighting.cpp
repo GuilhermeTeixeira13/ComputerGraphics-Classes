@@ -1,293 +1,366 @@
-﻿/*
-
-1. To get a better understanding of Phong's lighting model, move the light source around 
-the scene over time.This movement can be accomplished using either sin or cos.
-
- --->  2. Additionally, experiment with different ambient, diffuseand specular light factors(or
-    strengths), trying to grasp how they impact the result.Also play around with distinct
-    shininess factors.
-
-5. Change the properties of the object’s color over time.This is equivalent to change the
-    values RGB of the object in the scene.Note that reds, green, and blues are in the interval
-    [0, 1].
-    
- */
-
-
-#include <include\glad\glad.h>
-#include <GLFW/glfw3.h>
-
+﻿#define GLFW_INCLUDE_NONE
+#include <stdio.h>
+#include <math.h>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\shader_m.h>
+#include <GLFW/glfw3.h>
+#include"C:\ComputerGraphics-UBI\OpenGLRoot\cube\HelloWorld\textFile.h"
 #include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\camera.h>
 
-#include <iostream>
-using namespace std;
+double deltaTime = 0, nowTime = 0, lastTime = 0;
 
-#include <math.h>
+namespace GLMAIN {
+    GLFWwindow* window;			// Storage For glfw window
+    int frameBufferWidth = 800, frameBufferHeight = 800;
+    bool paused = false;        // Store whether the animation is paused
+    GLuint vao;					// Storage For vao
+    // Storage locations of uniforms
+    GLint planetLocaionLoc, planetColorLoc, radiusLoc, mvpLoc, mvLoc,
+        lightAmbientLoc, reflectAmbientLoc, lightPosLoc;
+    GLuint elementBufferHandle;
+    int highlightSphere = -1;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window);
+    // Store the locations of 6 spheres
+    float planetlocations[9][3] =
+    {
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 0.0f}
+    };
+    // Store the radius of 6 spheres
+    float planerRadius[9] = { 109.0f, 0.33f, 0.94f, 1.0f, 0.53f, 11.0f , 9.0f , 4.0f , 4.0f };
+    // Store the rotate speed of 6 spheres
+    float planetSpeed[9] = { 0.0f, 4.14f, 1.629f, 1.0f, 0.532, 0.0884f, 0.033f , 0.0119f, 0.0061f };
+    // Store the angles of 6 spheres
+    float planetAngle[9] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+    // Store the distances to the star of the 6 spheres
+    float planetDistance[9] = { 0.0f, 6.0f+ 109.0f, 10.0f+ 109.0f, 14.0f+ 109.0f, 21.28f+ 109.0f, 72.8f + 109.0f, 133.56f + 109.0f, 268.8f + 109.0f, 420.84f + 109.0f }; // Planetdistance to the star.
+    // Store the base colors  of the 6 spheres
+    float planetColor[9][3] =
+    {
+        {1.0f, 1.0f , 1.0f},
+        {1.0f, 1.0f , 0.0f},
+        {1.0f, 0.0f , 1.0f},
+        {0.0f, 0.0f , 1.0f},
+        {0.0f, 1.0f , 0.0f},
+        {1.0f, 0.0f , 0.0f},
+        {0.0f, 0.0f , 1.0f},
+        {0.0f, 1.0f , 0.0f},
+        {1.0f, 0.0f , 0.0f}
+    };
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+    // Points and faces of icosphere
+    const float X = 0.525731112119133606f;
+    const float Z = 0.850650808352039932f;
+    const float N = 0.0f;
+    const float Verts[12][3] =
+    {
+        {-X,N,Z}, {X,N,Z}, {-X,N,-Z}, {X,N,-Z},
+        {N,Z,X}, {N,Z,-X}, {N,-Z,X}, {N,-Z,-X},
+        {Z,X,N}, {-Z,X, N}, {Z,-X,N}, {-Z,-X, N}
+    };
+    const int Faces[20][3] =
+    {
+        {0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
+        {8,10,1},{8,3,10},{5,3,8},{5,2,3},{2,7,3},
+        {7,10,3},{7,6,10},{7,11,6},{11,0,6},{0,1,6},
+        {6,1,10},{9,0,11},{9,11,2},{9,2,5},{7,2,11}
+    };
+
+}
+
+
+void updateHighlightSphere();
+
+// Calulate the position of every sphere based on the angle and distance
+void calcLocations()
+{
+    if (GLMAIN::paused)
+        return;
+    for (int i = 0; i < 9; i++)
+    {
+        GLMAIN::planetAngle[i] += GLMAIN::planetSpeed[i];
+        while (GLMAIN::planetAngle[i] > 360.0)
+            GLMAIN::planetAngle[i] -= 360.0;
+        float tempAngle = (GLMAIN::planetAngle[i] / 180.0) * 3.14159;
+        GLMAIN::planetlocations[i][0] = sin(tempAngle) * GLMAIN::planetDistance[i];
+        GLMAIN::planetlocations[i][1] = cos(tempAngle) * GLMAIN::planetDistance[i];
+    }
+}
+
+
+// Generate perspective projection matrix
+void initPerspective(glm::mat4& m)
+{
+    const float aspect = 1;
+    const float zNear = 10.0f;
+    const float zFar = -1.0f;
+    const float zRange = zNear - zFar;
+    const float tanHalfFOV = tanf(0.5);
+    m[0][0] = 1.0f / (tanHalfFOV * aspect);
+    m[0][1] = 0.0f;
+    m[0][2] = 0.0f;
+    m[0][3] = 0.0f;
+    m[1][0] = 0.0f;
+    m[1][1] = 1.0f / tanHalfFOV;
+    m[1][2] = 0.0f;
+    m[1][3] = 0.0f;
+    m[2][0] = 0.0f;
+    m[2][1] = 0.0f;
+    m[2][2] = (zNear + zFar) / (zNear - zFar);
+    m[2][3] = 2.0f * zFar * zNear / (zNear - zFar);
+    m[3][0] = 0.0f;
+    m[3][1] = 0.0f;
+    m[3][2] = -1.0f;
+    m[3][3] = 0.0f;
+}
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-double twicePi = 2.0 * 3.142;
-bool firstMouse = true;
 
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
-
-// lighting
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-
-// Variables to turn on/off ambient/diffuse/specular light
-float ambientOption = 1.0f;
-float diffuseOption = 1.0f;
-float specularOption = 1.0f;
-// Variables to change the strength of ambient and specular light
-float ambientStrength = 0.1f;
-float specularStrength = 0.5f;
-// Variables to change the shininess factor
-float shininessFactor = 32.0f;
-
-int main()
+// Display method, draw six spheres.
+void display(void)
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glm::mat4 modelMatrix = glm::mat4(3.0f);
+    glm::mat4 mvp = glm::mat4(1.0f);
 
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+    glm::mat4  projectionMatrix;
+    initPerspective(projectionMatrix);
 
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
+    // view/projection transformations
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / (float)800, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+
+    glm::mat4 modelViewMareix = view * modelMatrix;
+
+    // model - view - projection matrix
+    mvp = projectionMatrix * view * modelMatrix;
+
+
+    // Set uniform  mvp
+    float mvpFloat[16];
+    for (int i = 0; i < 4; i++)
     {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
+        mvpFloat[i * 4] = mvp[i].x;
+        mvpFloat[i * 4 + 1] = mvp[i].y;
+        mvpFloat[i * 4 + 2] = mvp[i].z;
+        mvpFloat[i * 4 + 3] = mvp[i].w;
     }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
-    glfwSetScrollCallback(window, scroll_callback);
+    if (GLMAIN::mvpLoc != -1)
+        glUniformMatrix4fv(GLMAIN::mvpLoc, 1, false, mvpFloat);
 
-    // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    // Set uniform  mv
+    float mvFloat[16];
+    for (int i = 0; i < 4; i++)
     {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
+        mvFloat[i * 4] = modelViewMareix[i].x;
+        mvFloat[i * 4 + 1] = modelViewMareix[i].y;
+        mvFloat[i * 4 + 2] = modelViewMareix[i].z;
+        mvFloat[i * 4 + 3] = modelViewMareix[i].w;
+
     }
+    if (GLMAIN::mvLoc != -1)
+        glUniformMatrix4fv(GLMAIN::mvLoc, 1, false, mvFloat);
 
-    // configure global opengl state
-    // -----------------------------
-    glEnable(GL_DEPTH_TEST);
-
-    // build and compile our shader zprogram
-    // ------------------------------------
-    Shader lightingShader("C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.basic_lighting.vs", "C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.basic_lighting.fs");
-    Shader lampShader("C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.lamp.vs", "C:/ComputerGraphics-UBI/shadersCG/lighting/2.1.lamp.fs");
-
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-    };
-    // first, configure the cube's VAO (and VBO)
-    unsigned int VBO, cubeVAO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &VBO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindVertexArray(cubeVAO);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-
-    // second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
-    unsigned int lightVAO;
-    glGenVertexArrays(1, &lightVAO);
-    glBindVertexArray(lightVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // note that we update the lamp's position attribute's stride to reflect the updated buffer data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-
-    // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
+    glBindVertexArray(GLMAIN::vao);
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+    // Draw 6 spheres, the first one is the star
+    for (int i = 0; i < 9; i++)
     {
-        // per-frame time logic
-        // --------------------
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        glLoadName(i);
+        // set planet location
+        if (GLMAIN::planetLocaionLoc != -1)
+            glUniform3fv(GLMAIN::planetLocaionLoc, 1, &GLMAIN::planetlocations[i][0]);
+        // set the raduis of current sphere
+        if (GLMAIN::radiusLoc != -1)
+            glUniform1f(GLMAIN::radiusLoc, GLMAIN::planerRadius[i]);
+        // set color od current sphere
+        if (GLMAIN::planetColorLoc != -1)
+            glUniform3fv(GLMAIN::planetColorLoc, 1, GLMAIN::planetColor[i]);
+        // Set ambient light
+        if (GLMAIN::lightAmbientLoc != -1 && GLMAIN::reflectAmbientLoc != -1)
+        {
+            if (i == 0) // It is the star
+            {
+                // The star has a bright ambient light.
+                float la[3] = { 1.0f, 1.0f, 1.0f };
+                float ra[3] = { 1.0f, 1.0f, 1.0f };
+                glUniform3fv(GLMAIN::lightAmbientLoc, 1, la);
+                glUniform3fv(GLMAIN::reflectAmbientLoc, 1, ra);
+            }
+            else if (GLMAIN::highlightSphere == i)
+            {
+                // The highlighted planet
+                float la[3] = { 1.0f, 1.0f, 1.0f };
+                float ra[3] = { 1.0f, 1.0f, 1.0f };
+                glUniform3fv(GLMAIN::lightAmbientLoc, 1, la);
+                glUniform3fv(GLMAIN::reflectAmbientLoc, 1, ra);
 
-        // input
-        // -----
-        processInput(window);
-
-        // render
-        // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // lighting - going around the (0,0,0) -> center of the big cube
-        glm::vec3 lightPos((1.5f * cos(currentFrame * twicePi / 20)), 0.0f, (1.5f * sin(currentFrame * twicePi / 20)));
-
-        // Limit variables values
-
-        if (ambientStrength > 1.0f)
-            ambientStrength = 1.0f;
-        if (ambientStrength < 0.0f)
-            ambientStrength = 0.0f;
-
-        if (specularStrength > 1.0f)
-            specularStrength = 1.0f;
-        if (specularStrength < 0.0f)
-            specularStrength = 0.0f;
-
-        if (shininessFactor < 0.0f)
-            shininessFactor = 0.0f;
-        if (shininessFactor > 100.0f)
-            shininessFactor = 100.0f;
-
-        // be sure to activate shader when setting uniforms/drawing objects
-        lightingShader.use();
-        lightingShader.setVec3("objectColor", sin(currentFrame)+1, cos(currentFrame) + 1, 0.5f);
-        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        lightingShader.setVec3("lightPos", lightPos);
-        lightingShader.setVec3("viewPos", camera.Position);
-
-        // Passing light type/strength/shininess options to the shader
-        lightingShader.setFloat("ambientOption", ambientOption);
-        lightingShader.setFloat("diffuseOption", diffuseOption);
-        lightingShader.setFloat("specularOption", specularOption);
-        lightingShader.setFloat("ambientStrength", ambientStrength);
-        lightingShader.setFloat("specularStrength", specularStrength);
-        lightingShader.setFloat("shininessFactor", shininessFactor);
-
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        lightingShader.setMat4("projection", projection);
-        lightingShader.setMat4("view", view);
-
-        // world transformation
-        glm::mat4 model = glm::mat4(1.0f);
-        lightingShader.setMat4("model", model);
-
-        // render the cube
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // also draw the lamp object
-        lampShader.use();
-        lampShader.setMat4("projection", projection);
-        lampShader.setMat4("view", view);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        lampShader.setMat4("model", model);
-
-        glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+            }
+            else
+            {
+                // The normal planets have normal ambient light.
+                float la[3] = { 0.8f,0.8f,0.8f };
+                float ra[3] = { 0.5f,0.5f,0.5f };
+                glUniform3fv(GLMAIN::lightAmbientLoc, 1, la);
+                glUniform3fv(GLMAIN::reflectAmbientLoc, 1, ra);
+            }
+        }
+        // Set point light
+        if (GLMAIN::lightPosLoc != -1)
+        {
+            float lp[3] = { 0.0f,0.0f,0.0f };  // Only have one point light source located at the center of the star(the first sphere).
+            glUniform3fv(GLMAIN::lightPosLoc, 1, lp);
+        }
+        glDrawElements(GL_PATCHES, sizeof(GLMAIN::Faces), GL_UNSIGNED_INT, (void*)0);
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &cubeVAO);
-    glDeleteVertexArrays(1, &lightVAO);
-    glDeleteBuffers(1, &VBO);
-
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
-    glfwTerminate();
-    return 0;
+    // Update highlight sphere here and in next display the new highlighted sphere could be seen.
+    updateHighlightSphere();
+    glfwSwapBuffers(GLMAIN::window);
+    glfwPollEvents();
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
+
+void initVAO() // Init vao, vbo.
+{
+    glGenVertexArrays(1, &GLMAIN::vao);
+    glBindVertexArray(GLMAIN::vao);
+
+    GLuint positionBufferHandle;
+    glGenBuffers(1, &positionBufferHandle);
+    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLMAIN::Verts), GLMAIN::Verts, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glGenBuffers(1, &GLMAIN::elementBufferHandle);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GLMAIN::elementBufferHandle);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLMAIN::Faces), GLMAIN::Faces, GL_STATIC_DRAW);
+}
+
+
+
+// Init shaders.
+int setShaders()
+{
+    GLint vertCompiled, fragCompiled;
+    GLint tcsCompiled, tesCompiled, gsCompiled;
+
+
+    GLint linked;
+    char* vs = NULL, * fs = NULL;
+    char* cs = NULL, * es = NULL, * gs = NULL;
+
+    GLuint VertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
+    GLuint FragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);;
+    GLuint tcsObject = glCreateShader(GL_TESS_CONTROL_SHADER);
+    GLuint tesObject = glCreateShader(GL_TESS_EVALUATION_SHADER);
+    GLuint gsObject = glCreateShader(GL_GEOMETRY_SHADER);
+
+    GLuint ProgramObject = glCreateProgram();
+
+    vs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.vert");   // vertex shader
+    fs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.frag");   // fragment shader
+    cs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.cont");   // TCS shader
+    es = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.eval");   // TES shader
+    gs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.gs");     // Geometry shader
+
+    glUseProgram(ProgramObject);
+
+    // Load source code into shaders.
+    glShaderSource(VertexShaderObject, 1, (const char**)&vs, NULL);
+    glShaderSource(FragmentShaderObject, 1, (const char**)&fs, NULL);
+
+    glShaderSource(tcsObject, 1, (const char**)&cs, NULL);
+    glShaderSource(tesObject, 1, (const char**)&es, NULL);
+    glShaderSource(gsObject, 1, (const char**)&gs, NULL);
+
+    // Compile the  vertex shader.
+    glCompileShader(VertexShaderObject);
+    glGetShaderiv(VertexShaderObject, GL_COMPILE_STATUS, &vertCompiled);
+    // Compile the fragment shader
+    glCompileShader(FragmentShaderObject);
+    glGetShaderiv(FragmentShaderObject, GL_COMPILE_STATUS, &fragCompiled);
+    // Compile the tessellation control shader
+    glCompileShader(tcsObject);
+    glGetShaderiv(tcsObject, GL_COMPILE_STATUS, &tcsCompiled);
+    // Compile the tessellation evaluate shader
+    glCompileShader(tesObject);
+    glGetShaderiv(tesObject, GL_COMPILE_STATUS, &tesCompiled);
+    // Compile the geometry shader
+    glCompileShader(gsObject);
+    glGetShaderiv(gsObject, GL_COMPILE_STATUS, &gsCompiled);
+
+    if (!vertCompiled || !fragCompiled || !tcsCompiled || !tesCompiled || !gsCompiled)
+    {
+        printf("Shader compile failed, vertCompiled:%d, fragCompiled:%d, tcsCompiled:%d, tesCompiled:%d, gsCompiled:%d\n",
+            vertCompiled, fragCompiled, tcsCompiled, tesCompiled, gsCompiled);
+        return 0;
+    }
+
+    glAttachShader(ProgramObject, VertexShaderObject);
+    glAttachShader(ProgramObject, FragmentShaderObject);
+    glAttachShader(ProgramObject, tcsObject);
+    glAttachShader(ProgramObject, tesObject);
+    glAttachShader(ProgramObject, gsObject);
+
+    glLinkProgram(ProgramObject);
+    glGetProgramiv(ProgramObject, GL_LINK_STATUS, &linked);
+    if (!linked)
+    {
+        // Print logs if link shaders failed.
+        GLsizei len;
+        glGetProgramiv(ProgramObject, GL_INFO_LOG_LENGTH, &len);
+        GLchar* log = new GLchar[len + 1];
+        glGetProgramInfoLog(ProgramObject, len, &len, log);
+        printf("Shader linking failed: %s\n", log);
+        delete[] log;
+        return 0;
+    }
+
+    glUseProgram(ProgramObject);
+
+
+    GLMAIN::planetLocaionLoc = glGetUniformLocation(ProgramObject, "planetLocaion");
+    GLMAIN::radiusLoc = glGetUniformLocation(ProgramObject, "radius");
+    GLMAIN::planetColorLoc = glGetUniformLocation(ProgramObject, "planetColor");
+    GLMAIN::mvpLoc = glGetUniformLocation(ProgramObject, "mvp");
+    GLMAIN::mvLoc = glGetUniformLocation(ProgramObject, "mv");
+    GLMAIN::lightAmbientLoc = glGetUniformLocation(ProgramObject, "La");  // //Ambient light intensity
+    GLMAIN::reflectAmbientLoc = glGetUniformLocation(ProgramObject, "Ra"); //Ambient reflectivity
+    GLMAIN::lightPosLoc = glGetUniformLocation(ProgramObject, "lightPos"); //Ambient reflectivity
+
+
+    glDeleteShader(VertexShaderObject);
+    glDeleteShader(FragmentShaderObject);
+    glDeleteShader(tcsObject);
+    glDeleteShader(tesObject);
+    glDeleteShader(gsObject);
+    glDeleteProgram(ProgramObject);
+    return 1;
+}
+
+
+// callback of key event
+void keyfunc(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)  // If space key is pressed, pause/resume animation
+    {
+        GLMAIN::paused = !GLMAIN::paused;
+    }
+}
+
+
 void processInput(GLFWwindow* window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -296,77 +369,138 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-
-    // I -> Remove ambient light
-    // O -> Remove diffuse light
-    // P -> Remove specular light
-
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-        ambientOption = 0;
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
-        ambientOption = 1;
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
-        diffuseOption = 0;
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_RELEASE)
-        diffuseOption = 1;
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-        specularOption = 0;
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_RELEASE)
-        specularOption = 1;
-
-    // J/N -> Increase/Decrease ambient strenght
-    // K/M -> Increase/Decrease specular strenght
-
-    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-        ambientStrength += 0.001f;
-    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-        ambientStrength -= 0.001f;
-    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-        specularStrength += 0.001f;
-    if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-        specularStrength -= 0.001f;
-
-    // H/B -> Increase/Decrease shininess factor
-
-    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-        shininessFactor+= 0.1f;
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
-        shininessFactor -= 0.1f;
 }
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+// Mark the max value of RGB components, for example, maxFlag of RGB[255,0,0] is [1,0,0]
+void getMaxFlagfromRGB(bool maxFlag[], float RGB[3])
 {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
-    glViewport(0, 0, width, height);
-}
-
-
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-    if (firstMouse)
+    float maxValue = RGB[0];
+    for (int i = 1; i < 3; i++)
     {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
+        if (maxValue < RGB[i])
+            maxValue = RGB[i];
+    }
+    for (int i = 0; i < 3; i++)
+    {
+        if (maxValue != 0 && maxValue == RGB[i])
+            maxFlag[i] = true;
+        else
+            maxFlag[i] = false;
     }
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-    lastX = xpos;
-    lastY = ypos;
-
-    camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+// Check if a mouse position hovers a sphere by checking color
+// As the color has been affected by light, so we only check if the max components of
+// RGB matches, if YES, the colors are matched. This could only appiled in this situation
+// because we define the RGB of spheres by only 0 or 1.
+void updateHighlightSphere()
 {
-    camera.ProcessMouseScroll(yoffset);
+    double x, y;
+    glfwGetCursorPos(GLMAIN::window, &x, &y);
+
+
+    if (x < 0 || y < 0 || x > GLMAIN::frameBufferWidth || y > GLMAIN::frameBufferHeight)
+    {
+        GLMAIN::highlightSphere = -1;
+        return;
+    }
+    GLubyte pixels[3];
+
+    glReadPixels(x, GLMAIN::frameBufferHeight - y, 1, 1, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+    bool maxFlagPixel[3];
+    float pixelRGB[3];
+    pixelRGB[0] = pixels[0];
+    pixelRGB[1] = pixels[1];
+    pixelRGB[2] = pixels[2];
+
+    getMaxFlagfromRGB(maxFlagPixel, pixelRGB);
+
+    int i;
+    for (i = 0; i < 6; i++)
+    {
+        bool maxFlagSphere[3];
+        getMaxFlagfromRGB(maxFlagSphere, GLMAIN::planetColor[i]);
+        bool match = true;
+        for (int j = 0; j < 3; j++)
+        {
+            if (maxFlagSphere[j] != maxFlagPixel[j])  // If any component does not match, check next sphere
+            {
+                match = false;
+                break;
+            }
+        }
+        if (match) // We have found the matched sphere i.
+            break;
+    }
+
+    GLMAIN::highlightSphere = i; // i is the found sphere, if it is 6, match failed, no object is selected.
+    if (i < 6)
+        printf("debug: the sphere %d is hovered\n", i);
+    return;
+}
+
+
+
+// If the frame buffer is resized by resing the window, update viewport and frameBufferWidth/frameBufferHeight
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+
+    glViewport(0, 0, width, height);
+    GLMAIN::frameBufferWidth = width;
+    GLMAIN::frameBufferHeight = height;
+}
+
+// Entry point
+int main(int argc, char* argv[])
+{
+    // init glfw
+    if (!glfwInit())
+        return -1;
+
+    // create a windowed mode window and its OpenGL context
+    GLMAIN::window = glfwCreateWindow(GLMAIN::frameBufferWidth, GLMAIN::frameBufferHeight, "Solar System", NULL, NULL);
+    if (!GLMAIN::window)
+    {
+        glfwTerminate();
+        return -1;
+    }
+
+    //make the window's context current
+    glfwMakeContextCurrent(GLMAIN::window);
+    glfwSetKeyCallback(GLMAIN::window, keyfunc);
+    glfwSetFramebufferSizeCallback(GLMAIN::window, framebuffer_size_callback);
+
+    // init glew
+    glewExperimental = GL_TRUE;
+    glewInit();
+
+    setShaders();
+    initVAO();
+
+    static double limitFPS = 1.0 / 30.0; // limit to 30 frames per second
+    lastTime = glfwGetTime();
+    deltaTime = 0, nowTime = 0;
+
+    glEnable(GL_DEPTH_TEST);
+    /* Loop until the user closes the window */
+    while (!glfwWindowShouldClose(GLMAIN::window))
+    {
+        nowTime = glfwGetTime();
+        deltaTime += (nowTime - lastTime) / limitFPS;
+        lastTime = nowTime;
+
+        if (deltaTime < 1.0)
+            continue;
+        // - Only update at 30 frames / second
+        while (deltaTime >= 1.0) {
+            deltaTime--;
+        }
+
+        calcLocations();
+        display(); //  Render function
+    }
+    glfwTerminate();
+    return 0;
 }
