@@ -7,25 +7,30 @@
 #include"C:\ComputerGraphics-UBI\OpenGLRoot\cube\HelloWorld\textFile.h"
 #include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\camera.h>
 
-// camera
-Camera camera(glm::vec3(0.0f, 0.0f, 20.0f));
+// Gui - Initial camera position
+Camera camera(glm::vec3(0.0f, 0.0f, 100.0f));
 
-float lastX = 800 / 2.0f;
-float lastY = 800 / 2.0f;
+// Gui - Screen size 
+float SCR_WIDTH = 800;
+float SCR_HEIGHT = 800;
+
+// Gui - Usefull for mouse movement
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 
-// timing
+// Gui - Usefull to calculate current frame
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 namespace GLMAIN {
     GLFWwindow* window;			// Storage For glfw window
-    int frameBufferWidth = 800, frameBufferHeight = 800;
+    int frameBufferWidth = SCR_WIDTH, frameBufferHeight = SCR_HEIGHT;
     bool paused = false;        // Store whether the animation is paused
     GLuint vao;					// Storage For vao
+    
     // Storage locations of uniforms
-    GLint planetLocaionLoc, planetColorLoc, radiusLoc, mvpLoc, mvLoc,
-        lightAmbientLoc, reflectAmbientLoc, lightPosLoc;
+    GLint planetLocaionLoc, planetColorLoc, radiusLoc, mvpLoc, mvLoc, lightAmbientLoc, reflectAmbientLoc, lightPosLoc;
     GLuint elementBufferHandle;
     int highlightSphere = -1;
 
@@ -43,39 +48,46 @@ namespace GLMAIN {
         {0.0f, 0.0f , 0.0f},
         {0.0f, 0.0f , 0.0f}
     };
+    
     // Store the radius of 6 spheres
     float planerRadius[10] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f , 1.0f , 1.0f, 0.3f };
+    
     // Store the rotate speed of 6 spheres
     float planetSpeed[10] = { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f, 1.0f, 1.0f };
+    
     // Store the angles of 6 spheres
     float planetAngle[10] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+    
     // Store the distances to the star of the 6 spheres
     float planetDistance[10] = { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f, 35.0f, 40.0f, 2.0f }; // Planetdistance to the star.
+    
     // Store the base colors  of the 6 spheres
     float planetColor[10][3] =
     {
         {1.0f, 1.0f , 1.0f},
+        {1.0f, 0.0f , 0.0f},
+        {0.0f, 1.0f , 0.0f},
+        {0.0f, 0.0f , 1.0f},
         {1.0f, 1.0f , 0.0f},
         {1.0f, 0.0f , 1.0f},
-        {0.0f, 0.0f , 1.0f},
-        {0.0f, 1.0f , 0.0f},
-        {1.0f, 0.0f , 0.0f},
-        {0.0f, 0.0f , 1.0f},
-        {0.0f, 1.0f , 0.0f},
-        {1.0f, 0.0f , 0.0f},
-        {1.0f, 0.0f , 0.0f}
+        {0.0f, 1.0f , 1.0f},
+        {0.7f, 0.7f , 0.7f},
+        {0.8f, 0.8f , 0.8f},
+        {0.9f, 0.9f , 0.9f}
     };
 
     // Points and faces of icosphere
     const float X = 0.525731112119133606f;
     const float Z = 0.850650808352039932f;
     const float N = 0.0f;
+
     const float Verts[12][3] =
     {
         {-X,N,Z}, {X,N,Z}, {-X,N,-Z}, {X,N,-Z},
         {N,Z,X}, {N,Z,-X}, {N,-Z,X}, {N,-Z,-X},
         {Z,X,N}, {-Z,X, N}, {Z,-X,N}, {-Z,-X, N}
     };
+
     const int Faces[20][3] =
     {
         {0,4,1},{0,9,4},{9,5,4},{4,5,8},{4,8,1},
@@ -83,9 +95,7 @@ namespace GLMAIN {
         {7,10,3},{7,6,10},{7,11,6},{11,0,6},{0,1,6},
         {6,1,10},{9,0,11},{9,11,2},{9,2,5},{7,2,11}
     };
-
 }
-
 
 void updateHighlightSphere();
 
@@ -100,9 +110,12 @@ void calcLocations()
         while (GLMAIN::planetAngle[i] > 360.0)
             GLMAIN::planetAngle[i] -= 360.0;
         float tempAnglePlanets = (GLMAIN::planetAngle[i] / 180.0) * 3.14159;
+
+        // Rotating around the sun
         GLMAIN::planetlocations[i][0] = (sin(tempAnglePlanets) * GLMAIN::planetDistance[i]) + GLMAIN::planetlocations[0][0];
         GLMAIN::planetlocations[i][1] = (cos(tempAnglePlanets) * GLMAIN::planetDistance[i]) + GLMAIN::planetlocations[0][1];
 
+        // Gui - Earth's moon -  rotatin around earth
         if (i == 9) {
             GLMAIN::planetAngle[9] += GLMAIN::planetSpeed[9];
             while (GLMAIN::planetAngle[9] > 360.0)
@@ -145,20 +158,17 @@ void initPerspective(glm::mat4& m)
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glm::mat4 modelMatrix = glm::mat4(3.0f);
     glm::mat4 mvp = glm::mat4(1.0f);
 
-    glm::mat4  projectionMatrix;
-    initPerspective(projectionMatrix);
-
     // view/projection transformations
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / (float)800, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
-
     glm::mat4 modelViewMareix = view * modelMatrix;
 
     // model -view - projection matrix
-    mvp = projectionMatrix * view * modelMatrix;
+    mvp = projection * view * modelMatrix;
 
     // Set uniform  mvp
     float mvpFloat[16];
@@ -187,7 +197,7 @@ void display(void)
 
     glBindVertexArray(GLMAIN::vao);
     glPatchParameteri(GL_PATCH_VERTICES, 3);
-    // Draw 6 spheres, the first one is the star
+    // Draw 10 spheres, the first one is the star
     for (int i = 0; i < 10; i++)
     {
         glLoadName(i);
@@ -262,8 +272,6 @@ void initVAO() // Init vao, vbo.
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLMAIN::Faces), GLMAIN::Faces, GL_STATIC_DRAW);
 }
 
-
-
 // Init shaders.
 int setShaders()
 {
@@ -283,11 +291,39 @@ int setShaders()
 
     GLuint ProgramObject = glCreateProgram();
 
+    // Paths GUI
     vs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.vert");   // vertex shader
     fs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.frag");   // fragment shader
     cs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.cont");   // TCS shader
     es = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.eval");   // TES shader
     gs = textFileRead((char*)"C:/ComputerGraphics-UBI/shadersCG/solarSystem/test.gs");     // Geometry shader
+
+    /*
+    // Paths João
+    vs = textFileRead((char*)"test.vert");   // vertex shader
+    fs = textFileRead((char*)"test.frag");   // fragment shader
+    cs = textFileRead((char*)"test.cont");   // TCS shader
+    es = textFileRead((char*)"test.eval");   // TES shader
+    gs = textFileRead((char*)"test.gs");     // Geometry shader
+    */
+
+    /*
+    // Paths Cláudio
+    vs = textFileRead((char*)"test.vert");   // vertex shader
+    fs = textFileRead((char*)"test.frag");   // fragment shader
+    cs = textFileRead((char*)"test.cont");   // TCS shader
+    es = textFileRead((char*)"test.eval");   // TES shader
+    gs = textFileRead((char*)"test.gs");     // Geometry shader
+    */
+
+    /*
+    // Paths Tiago
+    vs = textFileRead((char*)"test.vert");   // vertex shader
+    fs = textFileRead((char*)"test.frag");   // fragment shader
+    cs = textFileRead((char*)"test.cont");   // TCS shader
+    es = textFileRead((char*)"test.eval");   // TES shader
+    gs = textFileRead((char*)"test.gs");     // Geometry shader
+    */
 
     glUseProgram(ProgramObject);
 
@@ -364,27 +400,16 @@ int setShaders()
     return 1;
 }
 
+// Gui - Keys to stop the animation (SPACE) and to leave the game (ESC)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)  // If space key is pressed, pause/resume animation
-    {
         GLMAIN::paused = !GLMAIN::paused;
-        printf("%d", GLMAIN::paused);
-    }
-
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
+// Gui - Keys to travel to the universe (W/A/S/D)
 void movement(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -397,8 +422,7 @@ void movement(GLFWwindow* window)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
+// Gui - Change view direction with the mouse
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (firstMouse)
@@ -417,8 +441,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
+// Gui - Camera Zoom
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(yoffset);
@@ -449,9 +472,7 @@ void getMaxFlagfromRGB(bool maxFlag[], float RGB[3])
 // because we define the RGB of spheres by only 0 or 1.
 void updateHighlightSphere()
 {
-    double x, y;
-    glfwGetCursorPos(GLMAIN::window, &x, &y);
-
+    double x = SCR_WIDTH / 2, y = SCR_HEIGHT / 2;
 
     if (x < 0 || y < 0 || x > GLMAIN::frameBufferWidth || y > GLMAIN::frameBufferHeight)
     {
@@ -471,7 +492,7 @@ void updateHighlightSphere()
     getMaxFlagfromRGB(maxFlagPixel, pixelRGB);
 
     int i;
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < 10; i++)
     {
         bool maxFlagSphere[3];
         getMaxFlagfromRGB(maxFlagSphere, GLMAIN::planetColor[i]);
@@ -488,8 +509,8 @@ void updateHighlightSphere()
             break;
     }
 
-    GLMAIN::highlightSphere = i; // i is the found sphere, if it is 6, match failed, no object is selected.
-    if (i < 6)
+    GLMAIN::highlightSphere = i; // i is the found sphere, if it is 10, match failed, no object is selected.
+    if (i < 10)
         printf("debug: the sphere %d is hovered\n", i);
     return;
 }
@@ -525,6 +546,7 @@ int main(int argc, char* argv[])
     glfwSetCursorPosCallback(GLMAIN::window, mouse_callback);
     glfwSetScrollCallback(GLMAIN::window, scroll_callback);
 
+
     glfwSetInputMode(GLMAIN::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // init glew
@@ -535,6 +557,7 @@ int main(int argc, char* argv[])
     initVAO();
 
     glEnable(GL_DEPTH_TEST);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(GLMAIN::window))
     {

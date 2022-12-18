@@ -1,18 +1,20 @@
 ﻿  lighting.cpp
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(102,32): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(110,32): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(406,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(407,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(411,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(412,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(414,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(415,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(424,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(463,47): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(463,18): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(541,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(28,26): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(28,57): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(112,32): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(123,32): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(430,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(431,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(435,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(436,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(438,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(439,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(447,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(484,47): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(484,18): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(564,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Generating code
-  2 of 74 functions ( 2.7%) were compiled, the rest were copied from previous compilation.
+  0 of 77 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
