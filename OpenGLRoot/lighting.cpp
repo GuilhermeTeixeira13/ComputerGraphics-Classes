@@ -30,8 +30,9 @@ namespace GLMAIN {
     int highlightSphere = -1;
 
     // Store the locations of 6 spheres
-    float planetlocations[9][3] =
+    float planetlocations[10][3] =
     {
+        {0.0f, 0.0f , 0.0f},
         {0.0f, 0.0f , 0.0f},
         {0.0f, 0.0f , 0.0f},
         {0.0f, 0.0f , 0.0f},
@@ -43,15 +44,15 @@ namespace GLMAIN {
         {0.0f, 0.0f , 0.0f}
     };
     // Store the radius of 6 spheres
-    float planerRadius[9] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f , 1.0f , 1.0f };
+    float planerRadius[10] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f , 1.0f , 1.0f, 0.3f };
     // Store the rotate speed of 6 spheres
-    float planetSpeed[9] = { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f, 1.0f };
+    float planetSpeed[10] = { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f, 1.0f, 1.0f };
     // Store the angles of 6 spheres
-    float planetAngle[9] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+    float planetAngle[10] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
     // Store the distances to the star of the 6 spheres
-    float planetDistance[9] = { 0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f }; // Planetdistance to the star.
+    float planetDistance[10] = { 0.0f, 5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f, 35.0f, 40.0f, 2.0f }; // Planetdistance to the star.
     // Store the base colors  of the 6 spheres
-    float planetColor[9][3] =
+    float planetColor[10][3] =
     {
         {1.0f, 1.0f , 1.0f},
         {1.0f, 1.0f , 0.0f},
@@ -61,6 +62,7 @@ namespace GLMAIN {
         {1.0f, 0.0f , 0.0f},
         {0.0f, 0.0f , 1.0f},
         {0.0f, 1.0f , 0.0f},
+        {1.0f, 0.0f , 0.0f},
         {1.0f, 0.0f , 0.0f}
     };
 
@@ -92,17 +94,26 @@ void calcLocations()
 {
     if (GLMAIN::paused)
         return;
-    for (int i = 1; i < 9; i++)
+    for (int i = 1; i < 10; i++)
     {
         GLMAIN::planetAngle[i] += GLMAIN::planetSpeed[i];
         while (GLMAIN::planetAngle[i] > 360.0)
             GLMAIN::planetAngle[i] -= 360.0;
-        float tempAngle = (GLMAIN::planetAngle[i] / 180.0) * 3.14159;
-        GLMAIN::planetlocations[i][0] = sin(tempAngle) * GLMAIN::planetDistance[i];
-        GLMAIN::planetlocations[i][1] = cos(tempAngle) * GLMAIN::planetDistance[i];
+        float tempAnglePlanets = (GLMAIN::planetAngle[i] / 180.0) * 3.14159;
+        GLMAIN::planetlocations[i][0] = (sin(tempAnglePlanets) * GLMAIN::planetDistance[i]) + GLMAIN::planetlocations[0][0];
+        GLMAIN::planetlocations[i][1] = (cos(tempAnglePlanets) * GLMAIN::planetDistance[i]) + GLMAIN::planetlocations[0][1];
+
+        if (i == 9) {
+            GLMAIN::planetAngle[9] += GLMAIN::planetSpeed[9];
+            while (GLMAIN::planetAngle[9] > 360.0)
+                GLMAIN::planetAngle[9] -= 360.0;
+            float tempAngleLua = (GLMAIN::planetAngle[9] / 180.0) * 3.14159;
+
+            GLMAIN::planetlocations[9][0] = (sin(tempAngleLua) * GLMAIN::planetDistance[9]) + GLMAIN::planetlocations[3][0];
+            GLMAIN::planetlocations[9][1] = (cos(tempAngleLua) * GLMAIN::planetDistance[9]) + GLMAIN::planetlocations[3][1];
+        }
     }
 }
-
 
 // Generate perspective projection matrix
 void initPerspective(glm::mat4& m)
@@ -177,7 +188,7 @@ void display(void)
     glBindVertexArray(GLMAIN::vao);
     glPatchParameteri(GL_PATCH_VERTICES, 3);
     // Draw 6 spheres, the first one is the star
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < 10; i++)
     {
         glLoadName(i);
         // set planet location
