@@ -8,7 +8,7 @@
 #include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\camera.h>
 
 // Gui - Initial camera position
-Camera camera(glm::vec3(0.0f, 0.0f, 100.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 50.0f));
 
 // Gui - Screen size 
 float SCR_WIDTH = 800;
@@ -71,9 +71,9 @@ namespace GLMAIN {
         {1.0f, 1.0f , 0.0f},
         {1.0f, 0.0f , 1.0f},
         {0.0f, 1.0f , 1.0f},
-        {0.7f, 0.7f , 0.7f},
-        {0.8f, 0.8f , 0.8f},
-        {0.9f, 0.9f , 0.9f}
+        {1.0f, 1.0f , 1.0f},
+        {0.0f, 0.0f , 0.0f},
+        {1.0f, 1.0f , 0.0f}
     };
 
     // Points and faces of icosphere
@@ -492,7 +492,7 @@ void updateHighlightSphere()
     getMaxFlagfromRGB(maxFlagPixel, pixelRGB);
 
     int i;
-    for (i = 0; i < 10; i++)
+    for (i = 1; i < 9; i++)
     {
         bool maxFlagSphere[3];
         getMaxFlagfromRGB(maxFlagSphere, GLMAIN::planetColor[i]);
@@ -510,7 +510,7 @@ void updateHighlightSphere()
     }
 
     GLMAIN::highlightSphere = i; // i is the found sphere, if it is 10, match failed, no object is selected.
-    if (i < 10)
+    if (i < 9)
         printf("debug: the sphere %d is hovered\n", i);
     return;
 }
