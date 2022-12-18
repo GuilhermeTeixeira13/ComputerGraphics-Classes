@@ -1,11 +1,17 @@
 ﻿  lighting.cpp
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(38,99): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(90,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(414,47): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
-C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(414,18): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(100,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(395,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(396,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(400,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(401,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(403,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(404,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(413,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(452,47): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(452,18): warning C4244: 'argument': conversion from 'double' to 'GLint', possible loss of data
+C:\ComputerGraphics-UBI\OpenGLRoot\lighting.cpp(530,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Generating code
-  2 of 57 functions ( 3.5%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 74 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   HelloWorld.vcxproj -> C:\ComputerGraphics-UBI\OpenGLRoot\cube\x64\Release\Pratical Classes.exe

@@ -5,8 +5,18 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 #include"C:\ComputerGraphics-UBI\OpenGLRoot\cube\HelloWorld\textFile.h"
+#include <C:\ComputerGraphics-UBI\OpenGLRoot\cube\include\camera.h>
 
-double deltaTime = 0, nowTime = 0, lastTime = 0;
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 20.0f));
+
+float lastX = 800 / 2.0f;
+float lastY = 800 / 2.0f;
+bool firstMouse = true;
+
+// timing
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 namespace GLMAIN {
     GLFWwindow* window;			// Storage For glfw window
@@ -33,13 +43,13 @@ namespace GLMAIN {
         {0.0f, 0.0f , 0.0f}
     };
     // Store the radius of 6 spheres
-    float planerRadius[9] = { 1.0f, 0.33f, 0.94f, 1.0f, 0.53f, 11.0f , 9.0f , 4.0f , 4.0f };
+    float planerRadius[9] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f , 1.0f , 1.0f };
     // Store the rotate speed of 6 spheres
-    float planetSpeed[9] = { 0.0f, 4.14f, 1.629f, 1.0f, 0.532, 0.0884f, 0.033f , 0.0119f, 0.0061f };
+    float planetSpeed[9] = { 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f, 1.0f };
     // Store the angles of 6 spheres
     float planetAngle[9] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
     // Store the distances to the star of the 6 spheres
-    float planetDistance[9] = { 0.0f, 6.0f+ 109.0f, 10.0f+ 109.0f, 14.0f+ 109.0f, 21.28f+ 109.0f, 72.8f + 109.0f, 133.56f + 109.0f, 268.8f + 109.0f, 420.84f + 109.0f }; // Planetdistance to the star.
+    float planetDistance[9] = { 0.0f, 2.0f, 4.0f, 6.0f, 8.0f, 10.0f, 12.0f, 14.0f, 16.0f }; // Planetdistance to the star.
     // Store the base colors  of the 6 spheres
     float planetColor[9][3] =
     {
@@ -82,7 +92,7 @@ void calcLocations()
 {
     if (GLMAIN::paused)
         return;
-    for (int i = 0; i < 9; i++)
+    for (int i = 1; i < 9; i++)
     {
         GLMAIN::planetAngle[i] += GLMAIN::planetSpeed[i];
         while (GLMAIN::planetAngle[i] > 360.0)
@@ -130,36 +140,14 @@ void display(void)
     glm::mat4  projectionMatrix;
     initPerspective(projectionMatrix);
 
+    // view/projection transformations
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / (float)800, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
 
-    // Init view matrix
-    const glm::vec3 camPos(-600, 0, 10);// camera position
-    const glm::vec3 lookAt(0.0, 0.0, 0.0);
-    const glm::vec3 camOffset = lookAt - camPos;
-    const glm::vec3 camForward = camOffset /
-        glm::length(camOffset);
-    const glm::vec3 camUp0(.0f, 0.0f, -1.0f);
-    const glm::vec3 camRight = glm::cross(camForward, camUp0);
-    const glm::vec3 camUp = glm::cross(camRight, camForward);
-
-    const glm::mat4 viewRotation(
-        camRight.x, camUp.x, camForward.
-        x, 0.f, // column 0
-        camRight.y, camUp.y, camForward.
-        y, 0.f, // column 1
-        camRight.z, camUp.z, camForward.
-        z, 0.f, // column 2
-        0.f, 0.f, 0.f, 1.f);// column 3
-    const glm::mat4 viewTranslation(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        camPos.x, camPos.y, camPos.z, 1);
-    glm::mat4 viewMatrix = viewRotation * viewTranslation;
-    glm::mat4 modelViewMareix = viewMatrix * modelMatrix;
+    glm::mat4 modelViewMareix = view * modelMatrix;
 
     // model -view - projection matrix
-    mvp = projectionMatrix * viewMatrix * modelMatrix;
-
+    mvp = projectionMatrix * view * modelMatrix;
 
     // Set uniform  mvp
     float mvpFloat[16];
@@ -365,14 +353,64 @@ int setShaders()
     return 1;
 }
 
-
-// callback of key event
-void keyfunc(GLFWwindow* window, int key, int scancode, int action, int mods)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)  // If space key is pressed, pause/resume animation
     {
         GLMAIN::paused = !GLMAIN::paused;
+        printf("%d", GLMAIN::paused);
     }
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) 
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+void movement(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// ----------------------------------------------------------------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.ProcessMouseScroll(yoffset);
 }
 
 // Mark the max value of RGB components, for example, maxFlag of RGB[255,0,0] is [1,0,0]
@@ -446,7 +484,6 @@ void updateHighlightSphere()
 }
 
 
-
 // If the frame buffer is resized by resing the window, update viewport and frameBufferWidth/frameBufferHeight
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -472,8 +509,12 @@ int main(int argc, char* argv[])
 
     //make the window's context current
     glfwMakeContextCurrent(GLMAIN::window);
-    glfwSetKeyCallback(GLMAIN::window, keyfunc);
+    glfwSetKeyCallback(GLMAIN::window, key_callback);
     glfwSetFramebufferSizeCallback(GLMAIN::window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(GLMAIN::window, mouse_callback);
+    glfwSetScrollCallback(GLMAIN::window, scroll_callback);
+
+    glfwSetInputMode(GLMAIN::window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // init glew
     glewExperimental = GL_TRUE;
@@ -482,24 +523,15 @@ int main(int argc, char* argv[])
     setShaders();
     initVAO();
 
-    static double limitFPS = 1.0 / 60.0; // limit to 30 frames per second
-    lastTime = glfwGetTime();
-    deltaTime = 0, nowTime = 0;
-
     glEnable(GL_DEPTH_TEST);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(GLMAIN::window))
     {
-        nowTime = glfwGetTime();
-        deltaTime += (nowTime - lastTime) / limitFPS;
-        lastTime = nowTime;
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
-        if (deltaTime < 1.0)
-            continue;
-        // - Only update at 30 frames / second
-        while (deltaTime >= 1.0) {
-            deltaTime--;
-        }
+        movement(GLMAIN::window);
         calcLocations();
         display(); //  Render function
     }
